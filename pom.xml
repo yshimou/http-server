@@ -20,6 +20,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.3</version>
         </dependency>
+        <!--LOGGING-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -29,6 +30,13 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
+        </dependency>
+        <!--JUNIT-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version> 5.9.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
