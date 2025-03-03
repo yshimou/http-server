@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 class HttpParserTest {
 
   private static HttpParser httpParser;
@@ -19,8 +22,66 @@ class HttpParserTest {
 
   @Test
   void parseHttpRequest() throws IOException {
-    httpParser.parseHttpRequest(generateValidTestCase());
+    HttpRequest request = null;
+    try {
+      request = httpParser.parseHttpRequest(generateValidTestCase());
+    } catch (HttpParsingException e) {
+      fail(e);
+    }
+
+    assertEquals(request.getMethod(),HttpMethod.GET);
   }
+
+  @Test
+  void parseHttpRequestBadMethod() throws IOException {
+    try {
+      HttpRequest request = httpParser.parseHttpRequest(generateBadMethodNameCase());
+      fail();
+    } catch (HttpParsingException e) {
+      assertEquals(e.getErrorCode(), HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
+    }
+  }
+
+  @Test
+  void parseHttpRequestBadMethodTooLong() throws IOException {
+    try {
+      httpParser.parseHttpRequest(generateBadMethodNameTooLongCase());
+      fail();
+    } catch (HttpParsingException e) {
+      assertEquals(e.getErrorCode(), HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
+    }
+  }
+
+  @Test
+  void parseHttpRequestBadCaseInvalidNumberOfItems() throws IOException {
+    try {
+      httpParser.parseHttpRequest(generateBadCaseInvalidNumberOfItems());
+      fail();
+    } catch (HttpParsingException e) {
+      assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+    }
+  }
+
+  @Test
+  void parseHttpRequestBadCaseEmptyRequestLine() throws IOException {
+    try {
+      httpParser.parseHttpRequest(generateBadCaseEmptyReqLine());
+      fail();
+    } catch (HttpParsingException e) {
+      assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+    }
+  }
+
+    @Test
+  void parseHttpRequestBadCaseCRnoLF() throws IOException {
+    try {
+      httpParser.parseHttpRequest(generateBadCaseCRnoLF());
+      fail();
+    } catch (HttpParsingException e) {
+      assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+    }
+  }
+
 
   private InputStream generateValidTestCase() {
     String rawData = "GET / HTTP/1.1\r\n"
@@ -47,4 +108,61 @@ class HttpParserTest {
     );
         return inputStream;
   }
+
+   private InputStream generateBadMethodNameCase() {
+    String rawData = "Get / HTTP/1.1\r\n"
+        + "\r\n";
+    InputStream inputStream = new ByteArrayInputStream(
+        rawData.getBytes(
+            StandardCharsets.US_ASCII
+        )
+    );
+        return inputStream;
+  }
+
+   private InputStream generateBadMethodNameTooLongCase() {
+    String rawData = "GETTTTTTTTTTTT / HTTP/1.1\r\n"
+        + "\r\n";
+    InputStream inputStream = new ByteArrayInputStream(
+        rawData.getBytes(
+            StandardCharsets.US_ASCII
+        )
+    );
+        return inputStream;
+  }
+
+   private InputStream generateBadCaseInvalidNumberOfItems() {
+    String rawData = "GET / AAA HTTP/1.1\r\n"
+        + "\r\n";
+    InputStream inputStream = new ByteArrayInputStream(
+        rawData.getBytes(
+            StandardCharsets.US_ASCII
+        )
+    );
+        return inputStream;
+  }
+
+   private InputStream generateBadCaseEmptyReqLine() {
+    String rawData = "\r\n"
+        + "\r\n";
+    InputStream inputStream = new ByteArrayInputStream(
+        rawData.getBytes(
+            StandardCharsets.US_ASCII
+        )
+    );
+        return inputStream;
+  }
+
+     private InputStream generateBadCaseCRnoLF() {
+    String rawData = "GET / HTTP/1.1\r" //no LF
+        + "\r\n";
+    InputStream inputStream = new ByteArrayInputStream(
+        rawData.getBytes(
+            StandardCharsets.US_ASCII
+        )
+    );
+        return inputStream;
+  }
+
+
 }
