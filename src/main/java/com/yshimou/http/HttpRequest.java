@@ -2,6 +2,9 @@ package com.yshimou.http;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import static com.yshimou.http.HttpVersion.getBestCompatibleVersion;
 
 public class HttpRequest extends HttpMessage{
@@ -13,6 +16,12 @@ public class HttpRequest extends HttpMessage{
   private String originalHttpVersion; //literal from the request
 
   private HttpVersion bestCompatibleHttpVersion;
+
+  private HashMap<String,String> headers = new HashMap<>();
+
+
+  protected HttpRequest() {
+  }
 
   public String getOriginalHttpVersion() {
     return originalHttpVersion;
@@ -57,7 +66,16 @@ public class HttpRequest extends HttpMessage{
     throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
   }
 
-  protected HttpRequest() {
-
+  protected void addHeader(String headerName, String headerField) {
+    headers.put(headerName.toLowerCase(),headerField);
   }
+
+  public Set<String> getHeaderNames(){
+    return headers.keySet();
+  }
+
+  public String getHeader(String headerName) {
+    return headers.get(headerName.toLowerCase());
+  }
+
 }
