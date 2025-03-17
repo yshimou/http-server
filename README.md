@@ -10,14 +10,15 @@ This is a simple HTTP server implementation in Java.
 - multi-thread
 
 
-🛠 Technologies Used
+## 🛠 Technologies Used
+
 Java
 Socket programming
 Junit
 Maven
 
 
-🤝 Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Follow these steps:
 
@@ -33,6 +34,6 @@ Contributions are welcome! Follow these steps:
 
 
 
-📧 Contact
+## 📧 Contact
 
 For any questions, reach out via shimouyasser@gmail.com
