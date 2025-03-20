@@ -1,4 +1,4 @@
 {
   "port": 8083,
-  "webroot": "webroot"
+  "webroot": "webroot/"
 }
