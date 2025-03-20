@@ -31,9 +31,10 @@ public class ServerListenerThread extends Thread {
       while (serverSocket.isBound() && !serverSocket.isClosed()) {
 
         Socket socket = serverSocket.accept();
+        socket.setSendBufferSize(10000000);
         logger.info("Connection accepted from " + socket.getInetAddress());
 
-        HttpConnectionWorkerThread httpConnectionWorkerThread = new HttpConnectionWorkerThread(socket);
+        HttpConnectionWorkerThread httpConnectionWorkerThread = new HttpConnectionWorkerThread(socket,webroot);
         httpConnectionWorkerThread.start();
       }
 
